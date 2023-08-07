@@ -1,2 +1,2 @@
 #!/bin/bash
-find -name 6-third_line
+find -type f 6-third_line
