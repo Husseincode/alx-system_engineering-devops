@@ -1,0 +1,29 @@
+#!/bin/bash
+# Function to display process hierarchy recursively
+display_process() {
+    local pid="$1"
+    local level="$2"
+    
+    # Get process information
+    local cmd=$(ps -o cmd= -p "$pid")
+    local user=$(ps -o user= -p "$pid")
+    local starttime=$(ps -o lstart= -p "$pid")
+    
+    # Display process information
+    printf "%*s%s\t%s\t%s\n" "$level" '' "$pid" "$user" "$cmd" "$starttime"
+    
+    # Get child processes and display them
+    local children=$(pgrep -P "$pid")
+    for child in $children; do
+        display_process "$child" "$((level + 2))"
+    done
+}
+
+# Display header
+printf "%-10s %-10s %-10s %-20s %-10s\n" "PID" "USER" "COMMAND" "START_TIME"
+
+# Get all processes and display them
+all_processes=$(ps -eo pid=)
+for pid in $all_processes; do
+    display_process "$pid" 0
+done
